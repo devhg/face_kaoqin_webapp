@@ -1,0 +1,210 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" src="../js/hui.js"></script>
+		<link rel="stylesheet" href="../css/hui.css" />
+		<script src="../js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/utils.js"></script>
+		<script src="../js/clmtrackr.js"></script>
+		<!-- //引入高德JSAPI -->
+		<script type="text/javascript" src='https://webapi.amap.com/maps?v=1.4.4&test=true&key=845ce80350b293acfdb5670a5c702a83&plugin=AMap.ToolBar,AMap.IndoorMap'></script>
+
+		<style type="text/css">
+			* {
+				margin: 0px;
+				padding: 0px;
+				font-size: 14px;
+			}
+
+			#footer {
+				margin: 10px auto;
+				margin-top: 0;
+				background: #FFFFFF;
+				height: 74px;
+				width: 85%;
+				padding: 8px 20px;
+				z-index: 10;
+				line-height: 30px;
+			}
+
+			.msg {
+				position: absolute;
+				bottom: 30px;
+				right: 0;
+				width: 100%;
+				text-align: center;
+				font-size: 1.3rem;
+				color: #B54AFF;
+			}
+
+			#clock {
+				margin: 10px auto;
+				width: 170px;
+				height: 40px;
+				display: block;
+				font-size: 1.2rem;
+			}
+		</style>
+	</head>
+
+
+	<body style="background: #fff;">
+		<header style="background: linear-gradient(to left top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon"></a>
+			<h1 class="mui-title">签到</h1>
+		</header>
+		<div class="mui-content">
+			<div class="mui-card" style="margin: 50px auto; width: 85%; height: 470px; margin-bottom: 5px;">
+				<video id="webcam" width="400" height="400"></video>
+				<canvas id="overlay" width="400" height="400"></canvas>
+				<canvas id="canvas" width="400" height="400"></canvas>
+				<p id="positions"></p>
+				<style>
+					/*video和canvas标签位置重合使显示出来的人脸模型和视频重合*/
+					#webcam,
+					#canvas,
+					#overlay {
+						position: absolute;
+						top: 0;
+						left: 0;
+					}
+				</style>
+				<div id="msg" class="msg">请张张嘴, 眨眨眼</div>
+			</div>
+			<div id="footer" class="mui-card">
+				<span style="font-size: 1.3rem;">[当前位置]</span><br>
+				<span id="address"></span>
+			</div>
+			<!-- <div id="map" style="display: none;"></div> -->
+			<button id="clock" type="button" class="mui-btn mui-btn-purple">打卡签到</button>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/jquery-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/camera.js"></script>
+		<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			var btn;
+			var view;
+			mui.plusReady(function() {
+				view = plus.webview.currentWebview();
+				mui.ajax('http://192.168.1.103:8080/user/isClock.do', {
+					data: JSON.stringify({
+						'username': view.username,
+					}),
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 4000, //超时时间设置为10秒；
+					contentType: 'application/json;charset=utf-8',
+					success: function(data) {
+						btn = data.status;
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast("请确定网络通畅")
+					}
+				});
+				
+				
+				var mapObj = new AMap.Map('iCenter');
+				mapObj.plugin('AMap.Geolocation', function() {
+					geolocation = new AMap.Geolocation({
+						enableHighAccuracy: true, // 是否使用高精度定位，默认:true
+						timeout: 10000, // 超过10秒后停止定位，默认：无穷大
+						maximumAge: 0, // 定位结果缓存0毫秒，默认：0
+						convert: true, // 自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+						showButton: true, // 显示定位按钮，默认：true
+						buttonPosition: 'LB', // 定位按钮停靠位置，默认：'LB'，左下角
+						buttonOffset: new AMap.Pixel(10, 20), // 定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+						showMarker: true, // 定位成功后在定位到的位置显示点标记，默认：true
+						showCircle: true, // 定位成功后用圆圈表示定位精度范围，默认：true
+						panToLocation: true, // 定位成功后将定位到的位置作为地图中心点，默认：true
+						zoomToAccuracy: true // 定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+					});
+					mapObj.addControl(geolocation);
+					geolocation.getCurrentPosition();
+					AMap.event.addListener(geolocation, 'complete', onComplete); // 返回定位信息
+					AMap.event.addListener(geolocation, 'error', onError); // 返回定位出错信息
+				});
+			});
+			var alive = false;
+
+			function isAlive() {
+				alive = true;
+				// mui.toast("签到成功")
+			}
+			let flag = 1;
+			let time = setInterval(function() {
+				if (flag) {
+					$("#msg").show();
+					flag = 0;
+				} else {
+					$("#msg").hide();
+					flag = 1;
+				}
+			}, 500);
+
+			function onComplete(obj) {
+				mui.ajax('http://192.168.1.103:8080/user/checkLocation.do', {
+					data: JSON.stringify({
+						"username": view.username,
+						lng: obj.position.lng,
+						lat: obj.position.lat
+					}),
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 4000, //超时时间设置为10秒；
+					contentType: 'application/json;charset=utf-8',
+					success: function(data) {
+						if (data.status == 200) {
+							mui.toast("位置验证成功");
+						} else if (data.status == -200) {
+							mui.toast("位置验证失败");
+						}
+						console.log(JSON.stringify(data));
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast("error")
+					}
+				});
+
+				var res = '经纬度：' + obj.position +
+					'\n精度范围：' + obj.accuracy +
+					'米\n定位结果的来源：' + obj.location_type +
+					'\n状态信息：' + obj.info +
+					'\n地址：' + obj.formattedAddress +
+					'\n地址信息：' + JSON.stringify(obj.addressComponent, null, 4);
+				// alert(res);
+				console.log(JSON.stringify(obj.position));
+				document.getElementById("address").innerHTML = obj.formattedAddress;
+			}
+
+			function onError(obj) {
+				alert(obj.info + '--' + obj.message);
+				console.log(obj);
+			}
+		</script>
+		<script>
+			//这个不是写在首页，写在子页面（子页面才能返回，写在首页点击返回就是退出）
+			//不用引入mui.js，都是h5方法
+			document.addEventListener('plusready', function() {
+				var webview = plus.webview.currentWebview();
+				plus.key.addEventListener('backbutton', function() {
+					webview.canBack(function(e) {
+						if (e.canBack) {
+							webview.back(); //这里不建议修改自己跳转的路径
+						} else {
+							webview.close(); //hide,quit
+							//plus.runtime.quit();
+						}
+					})
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css" />
+		<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<style>
+			* {
+				touch-action: none; 
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<header style="background: linear-gradient(to left, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">考勤APP</h1>
+		</header>
+
+		<nav id="nav" class="mui-bar mui-bar-tab">
+			<a id="home" class="mui-tab-item mui-active" href="home.html">
+				<i class="fa fa-home" style="font-size:35px"></i>
+			</a>
+			<a id="func" class="mui-tab-item" href="func.html">
+				<i class="fa fa-calendar-check-o" style="font-size:31px;"></i>
+			</a>
+			<a id="info" class="mui-tab-item" href="info.html">
+				<i class="fa fa-user-circle-o" style="font-size:32px"></i>
+			</a>
+		</nav>
+
+
+		<script type="text/javascript">
+			mui.init();
+			// webView 实现导航切换
+			var subPages = ['home.html', 'func.html', 'info.html'];
+			var subPagesStyle = {
+				top: '60px',
+				bottom: '50px',
+				// 这里面写切换样式 动画 等等
+			};
+
+			mui.plusReady(function() {
+
+				var view = plus.webview.currentWebview();
+				console.log(view.username);
+
+
+				var self = plus.webview.currentWebview();
+
+
+				for (let i = 0; i < subPages.length; i++) {
+					var sub = plus.webview.create(
+						subPages[i], // url
+						subPages[i], // id
+						subPagesStyle, {
+							username: view.username
+						}
+					);
+
+					sub.hide(); // 所有界面隐藏
+					self.append(sub); //所有界面 添加到现在的界面
+				}
+				plus.webview.show(subPages[0]); // 显示默认界面
+			});
+
+			document.getElementById("home").addEventListener('tap',function(e) {
+				var tabPage = this.getAttribute('href');
+				plus.webview.show(tabPage);
+			});
+			document.getElementById("func").addEventListener('tap',function(e) {
+				var tabPage = this.getAttribute('href');
+				plus.webview.show(tabPage);
+			});
+			document.getElementById("info").addEventListener('tap',function(e) {
+				var tabPage = this.getAttribute('href');
+				plus.webview.show(tabPage);
+			});
+		</script>
+
+	</body>
+
+</html>

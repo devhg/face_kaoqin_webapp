@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/hui.css" />
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+		<style>
+			.code {
+				width: 100%;
+				height: 70px;
+				/* border: 1px solid black; */
+				padding: 5px 20px;
+				line-height: 60px;
+			}
+			.code a {
+				color: #323232;
+				text-decoration: underline;
+			}
+		</style>
+	</head>
+	<header style="background: linear-gradient(to left top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+		<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<h1 class="mui-title">修改密码</h1>
+	</header>
+	<div class="mui-content">
+		<div style="margin-top: 25px" class="mui-card">
+			<div class="hui-wrap">
+				<form style="padding:15px 10px;" class="hui-form" id="reset-pwd">
+					<div class="hui-form-items">
+						<div class="hui-form-items-title">用户名</div>
+						<input type="text" class="hui-input hui-input-clear" name="username" />
+					</div>
+					<div class="hui-form-items">
+						<div class="hui-form-items-title">原密码</div>
+						<input type="password" class="hui-input hui-input-clear" name="oriPwd" />
+					</div>
+					<div class="hui-form-items">
+						<div class="hui-form-items-title">新密码</div>
+						<input type="password" class="hui-input hui-input-clear" name="newPwd" />
+					</div>
+					<div class="hui-form-items">
+						<div class="hui-form-items-title">验证码</div>
+						<input type="text" class="hui-input hui-input-clear" name="checkCode" />
+					</div>
+					<div class="hui-form-items">
+						<div class="code">
+							<img id="img" style="display: inline-block; float: right; height: 60px; width: 150px;" src="http://192.168.1.103:8080/cc.do">
+							<a id="a" href="javascript:void(0);">看不清, 换一张？</a>
+						</div>
+					</div>
+					<div style="padding:15px 8px;">
+						<button type="button" class="hui-button hui-primary hui-fr" id="submitBtn">提交数据</button>
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+
+	<body>
+		<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			document.getElementById("a").addEventListener('tap', function() {
+				var date = new Date().getTime();
+				document.getElementById("img").src = "http://192.168.1.103:8080/cc.do?time=" + date;
+			})
+
+
+			mui.plusReady(function() {
+
+				document.getElementById("submitBtn").addEventListener('tap', function() {
+					var data = getFormData('reset-pwd');
+					console.log(JSON.stringify(data));
+					if (!data) {
+						mui.toast('请完整填写信息');
+					} else {
+						mui.ajax('http://192.168.1.103:8080/user/updatePwd.do', {
+							data: JSON.stringify({
+								'username': data.username,
+								'oriPwd': CryptoJS.MD5(data.oriPwd).toString(),
+								'newPwd': CryptoJS.MD5(data.newPwd).toString(),
+								'checkCode': data.checkCode
+							}),
+							dataType: 'json', //服务器返回json格式数据
+							type: 'post', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							async: false, // 同步方式是为了解决   手机键盘提交按钮 提交表单验证bug的
+							contentType: 'application/json;charset=utf-8', // 少了会报错
+							success: function(resp) {
+								console.log(JSON.stringify(resp));
+								mui.toast(resp.msg);
+								if (resp.status == -200) {
+
+								} else {
+									mui.openWindow({
+										url: 'index.html',
+										id: 'index.html',
+										extras: {
+											// username: username
+										}
+									});
+								}
+							},
+							error: function(xhr, type, errorThrown) {
+								console.log('error');
+							}
+						});
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

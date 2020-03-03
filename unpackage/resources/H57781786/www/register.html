@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+		<link rel="stylesheet" href="css/login.reg.css">
+		<style>
+			* {
+				touch-action: none; 
+			}
+		</style>
+	</head>
+	<body>
+		<header style="background: linear-gradient(to right top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<a style="color: #fff;" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 style="color: #fff;" class="mui-title">注&nbsp;册</h1>
+		</header>
+		<div class="main">
+			<div class="logo" style="margin-top: 120px;">
+				<img src="images/register.png" style="width: 80%; height: 200px;" alt="">
+			</div>
+			<div class="box">
+				<form class="form" method="">
+					<input class="reg-in" name="username" type="number" placeholder="请输入学号" />
+					<input class="reg-in" name="password0" type="password" placeholder="请输入密码" />
+					<input class="reg-in" name="password1" type="password" placeholder="请再输入一次密码" />
+					<button id="reg-btn" class="reg-in" type="submit">立即注册</button>
+				</form>
+				<a id="login" href="javascript:void(0);">已有账号，点击登录</a>
+			</div>
+		</div>
+		<script src="js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				// 打开登录界面
+				document.getElementById("login").addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'login.html',
+						id: 'login.html'
+					})
+				});
+
+				// 表单ajax
+
+				document.getElementById("reg-btn").addEventListener('tap', function() {
+					var ata = {
+						'username': mui('.form input')[0].value,
+						'password0': mui('.form input')[1].value,
+						'password1': mui('.form input')[2].value
+					}
+
+					// console.log(mui('.form input')[0].value);
+					// console.log(mui('.form input')[1].value);
+					// console.log(mui('.form input')[2].value);
+					// console.log(JSON.stringify(ata));
+					mui.ajax('https://blog.zxnest.club/test/index.php', {
+						data: ata,
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							console.log(JSON.stringify(data));
+						},
+						error: function(xhr, type, errorThrown) {
+							mui.toast(type);
+						}
+					});
+				})
+
+			})
+		</script>
+	</body>
+</html>

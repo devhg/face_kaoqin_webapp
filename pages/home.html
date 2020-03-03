@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/hui.css" rel="stylesheet" />
+		<style type="text/css">
+		</style>
+	</head>
+
+	<body>
+
+
+		<div style="background: linear-gradient(to left, #45B2FD, #B58AF4); width: 100%; height: 15px;">
+		</div>
+		<div class="hui-wrap">
+			<div class="hui-common-title" style="margin-top:25px;">
+				<div class="hui-common-title-line"></div>
+				<div class="hui-common-title-txt">紧急公告</div>
+				<div class="hui-common-title-line"></div>
+			</div>
+			<div style="text-align: center; background:#FFF; padding:0px 15px; margin:10px;" class="hui-flex">
+				<div class="hui-scroll-news" id="scrollnew1" style="width: 100%; ">
+					<div class="hui-scroll-news-items"><a href="javascript:hui.toast('别碰我╭(╯^╰)╮');">看什么看，说你呢，看什么看，还不快去签到</a></div>
+					<div class="hui-scroll-news-items">再不去，就扣你学分！</div>
+					<div class="hui-scroll-news-items">你还是不去是吧，行，导员马上找你谈话</div>
+				</div>
+			</div>
+			<div class="hui-common-title" style="margin-top:30px;">
+				<div class="hui-common-title-line"></div>
+				<div class="hui-common-title-txt">多行公告</div>
+				<div class="hui-common-title-line"></div>
+			</div>
+			<div style="text-align: center; background:#FFF; margin:10px;" class="hui-flex">
+				<div class="hui-scroll-news" id="scrollnew2" style="width: 100%; height:88px;">
+					<div class="hui-scroll-news-items"><a href="javascript:hui.toast('别碰我╭(╯^╰)╮');">请同学们及时回宿舍进行签到打卡！</a></div>
+					<div class="hui-scroll-news-items">请同学们及时回宿舍进行签到打卡！</div>
+					<div class="hui-scroll-news-items">请同学们及时回宿舍进行签到打卡！</div>
+				</div>
+			</div>
+		</div>
+
+		</div>
+		<script src="../js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/hui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var view = plus.webview.currentWebview();
+			});
+
+
+			hui.scrollNews(scrollnew1);
+			hui.scrollNews(scrollnew2, 4000);
+		</script>
+	</body>
+
+</html>

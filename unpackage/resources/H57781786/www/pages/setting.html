@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="../css/hui.css" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.min.css" />
+		<script src="../js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<header style="background: linear-gradient(to left top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<a style="color: #000;" class="mui-action-back mui-icon"></a>
+			<h1 class="mui-title">设置</h1>
+		</header>
+
+		<div class="mui-content" style="padding-top: 65px;">
+			<div style="margin-top: 25px" class="mui-card">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right">系统升级</a>
+						<div class="mui-collapse-content">
+							<img src="../images/2.jpg">
+							<span>滚，没有</span>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right">消息提醒</a>
+						<div class="mui-collapse-content">
+							<img src="../images/2.jpg">
+							<span>滚，没有</span>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right">Np功能</a>
+						<div class="mui-collapse-content">
+							<span>没钱肯定不行<img src="../images/1.jpg"></span>
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right">充钱补签(手动滑稽)</a>
+						<div class="mui-collapse-content">
+							<img src="../images/3.gif">
+						</div>
+					</li>
+					<li class="mui-table-view-cell mui-collapse">
+						<a class="mui-navigate-right">关于我们</a>
+						<div class="mui-collapse-content">
+							<img src="../images/3.gif">
+							<span>一个神秘的队伍</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="mui-card">
+				<div style="background:#FFFFFF; margin-top:28px;">
+					<button id="close" type="button" class="hui-button hui-button-large">
+						<span class="hui-icons hui-icons-logoff"></span>退出系统
+					</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../js/mui.min.js" charset="UTF-8"></script>
+		<script src="../js/hui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				hui('#close').click(function() {
+					hui.confirm('你确认要残忍离开我吗？', ['残忍离开', '再停留会'], function() {
+						mui.currentWebview.close();
+						console.log('确认后执行...');
+					}, function() {
+						plus.runtime.quit();
+					});
+				})
+			});
+		</script>
+		<script>
+			var first = null;
+			mui.back = function() {
+				mui.plusReady(function() {
+					//首页返回键处理
+					//处理逻辑：1秒内，连续两次按返回键，则退出应用；
+					if (!first) {
+						first = new Date().getTime();
+						mui.toast('再按一次退出应用');
+						setTimeout(function() {
+							first = null;
+						}, 1000);
+					} else {
+						if (new Date().getTime() - first < 1000) {
+							plus.runtime.quit();
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

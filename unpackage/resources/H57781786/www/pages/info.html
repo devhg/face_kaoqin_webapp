@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css" />
+		<style type="text/css">
+			.status {
+				position: relative;
+				width: 100%;
+				height: 200px;
+				margin: 0px auto;
+				padding: 20px;
+				background-color: #7D9AFB;
+			}
+
+			.status .user-pic {
+				display: block;
+				width: 90px;
+				height: 90px;
+				margin: 20px auto;
+				border-radius: 50%;
+			}
+
+			.status .now-status {
+				height: 50px;
+				margin: 20px auto;
+				text-align: center;
+			}
+
+			.status .now-status span {
+				font-size: 0.95rem;
+			}
+
+			.main {
+				width: 80%;
+				margin: 50px auto;
+			}
+
+			.main .mui-table-view-cell {
+				padding: 7px 18px;
+			}
+
+			.main .mui-table-view:before,
+			.main .mui-table-view:after {
+				height: 0;
+			}
+
+			.main ul li {
+				height: 90px;
+				margin-top: 15px;
+			}
+
+			.main ul li a {
+				line-height: 80px;
+			}
+
+			.mui-table-view-cell>a:not(.mui-btn) {
+				margin: -8px -19px;
+			}
+
+			.main ul li a span {
+				margin-left: 14px;
+				font-size: 1.2rem;
+			}
+
+			.main .mui-table-view .mui-navigate-right:after {
+				font-size: 1.5rem;
+			}
+
+			.mui-card {
+				box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+			}
+
+			.mui-table-view-cell:after {
+				height: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div style="background: linear-gradient(to left, #45B2FD, #B58AF4); width: 100%; height: 15px;">
+		</div>
+		<div class="mui-content">
+			<div style="background: linear-gradient(to left, #45B2FD, #B58AF4);" class="status">
+				<div class="user-pic">
+					<img src="../images/user.jpg" style="width: 100%; height: 100%; border-radius: 50%;">
+				</div>
+
+				<div class="now-status">
+					<div style="display: inline-block;">当前状态:</div>
+					<span id="now-status">
+						未签到
+					</span>
+				</div>
+			</div>
+			<div class="main">
+				<ul class="mui-table-view">
+					<li id="clock" class="mui-card mui-table-view-cell">
+						<a class="mui-navigate-right">
+							<i class="fa fa-calendar" style="color: #2AC845; font-size:24px"></i>
+							<span>历史签到</span>
+						</a>
+					</li>
+					<li id="add-info" class="mui-card mui-table-view-cell">
+						<a class="mui-navigate-right">
+							<i class="fa fa-pencil" style="color: darkorange; font-size:24px"></i>
+							<span>信息维护</span>
+						</a>
+					</li>
+					<li id="setting" class="mui-card mui-table-view-cell">
+						<a class="mui-navigate-right">
+							<i class="fa fa-gear" style="font-size:24px"></i>
+							<span>系统设置</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script src="../js/h.min.js"></script>
+		<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/hui.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var view = plus.webview.currentWebview();
+
+				mui.ajax('http://192.168.1.103:8080/user/isClock.do', {
+					data: JSON.stringify({
+						'username': view.username,
+					}),
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 4000, //超时时间设置为10秒；
+					contentType: 'application/json;charset=utf-8',
+					success: function(data) {
+						if (data.status == 1) {
+							document.getElementById("now-status").innerHTML = "已签到";
+						} else if (data.status == 0) {
+							document.getElementById("now-status").innerHTML = "未签到";
+						} else if (data.status == -1) {
+							document.getElementById("now-status").innerHTML = "已请假";
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						// mui.toast("请确定网络通畅")
+					}
+				});
+
+				document.getElementById("add-info").addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'add-info.html',
+						id: 'add-info.html',
+						extras: {
+							username: view.username
+						}
+					})
+				});
+				document.getElementById("setting").addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'setting.html',
+						id: 'setting.html',
+						extras: {
+							username: view.username
+						}
+					})
+				});
+				document.getElementById("clock").addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'echarts.html',
+						id: 'echarts.html',
+						extras: {
+							// username: view.username
+						}
+					})
+				})
+			});
+		</script>
+	</body>
+
+</html>

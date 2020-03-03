@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Document</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css" />
+		<link rel="stylesheet" href="css/login.reg.css">
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+		<script src="js/h.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+		<script src="js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+		<style>
+			* {
+				touch-action: none; 
+			}
+		</style>
+	</head>
+	<body>
+		<header style="background: linear-gradient(to right top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<h1 style="color: #000;" class="mui-title">考勤&nbsp;APP</h1>
+		</header>
+
+		<div class="logo" style="margin-top: 120px;">
+			<img src="images/login.png" style="width: 75%; height: 200px;" alt="">
+		</div>
+		<div class="box">
+			<form id="login" class="form">
+				<input id="u" class="reg-in" name="username" type="number" placeholder="请输入学号" />
+				<input id="p" class="reg-in" name="password" type="password" placeholder="请输入密码" />
+			</form>
+			<button class="go" id="login-btn" type="submit">
+				<i class="fa fa-arrow-right" style="font-size:24px"></i>
+			</button>
+			<a id="reset-pwd">忘记密码？</a>
+		</div>
+		<!--防止软键盘调起时，底部内容随之挤上来-->
+		<!-- script type="text/javascript">
+			//获取原始窗口的高度
+			var originalHeight = document.documentElement.clientHeight || document.body.clientHeight;
+			window.onresize = function() {
+				//软键盘弹起与隐藏  都会引起窗口的高度发生变化
+				var resizeHeight = document.documentElement.clientHeight || document.body.clientHeight;
+				if (resizeHeight * 1 < originalHeight * 1) { //resizeHeight<originalHeight证明窗口被挤压了
+					plus.webview.currentWebview().setStyle({
+						height: originalHeight
+					});
+				}
+			}
+		</script> -->
+		<script src="js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+
+			mui.plusReady(function() {
+				var localUsername = localStorage.getItem("username");
+				console.log("本地存储" + localUsername);
+				document.getElementById("u").value = localUsername;
+
+
+				var username;
+
+				function go() {
+					// 解决卡顿
+					mui.openWindow('pages/main.html', 'pages/main.html', {
+						show: {
+							event: "loaded" //在当前页面加载,加载完在跳转
+						},
+						waiting: {
+							autoShow: true, //自动显示等待框，默认为true
+							title: '正在加载...' //等待对话框上显示的提示内容
+						},
+						extras: {
+							username: username
+						}
+					})
+				}
+
+				document.getElementById("login-btn").addEventListener('tap', function() {
+					var data = getFormData("login");
+					username = data.username;
+
+					localStorage.setItem("username", username);
+					mui.ajax('http://192.168.1.103:8080/user/login.do', {
+						data: JSON.stringify({
+							'username': data.username,
+							'password': CryptoJS.MD5(data.password).toString()
+						}),
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 5000, //超时时间设置为10秒；
+						// async: false, // 同步方式是为了解决   手机键盘提交按钮 提交表单验证bug的
+						contentType: 'application/json;charset=utf-8', // 少了会报错
+						success: function(data) {
+							console.log(JSON.stringify(data));
+							if (data.status == 200) {
+								mui.toast("登录成功");
+								go();
+							} else if (data.status == -200) {
+								mui.toast("登录失败，请重新登录");
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							mui.toast("世界上最远的距离就是没网");
+						}
+					});
+				})
+
+
+
+				// 进入主页面
+				document.getElementById("reset-pwd").addEventListener('tap', function() {
+					mui.openWindow({
+						url: 'pages/main.html',
+						id: 'pages/main.html',
+						extras: {
+							username: username
+						}
+					});
+				});
+
+
+			});
+		</script>
+	</body>
+</html>

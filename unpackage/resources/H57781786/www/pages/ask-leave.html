@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/hui.css" />
+		<script src="../js/h.min.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body style="background: #fff">
+		<header style="background: linear-gradient(to left top, #45B2FD, #B58AF4);" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon"></a>
+			<h1 class="mui-title">信息维护</h1>
+		</header>
+		<div class="mui-content">
+			<div style="margin-top: 45px;" class="mui-card">
+				<div class="hui-wrap">
+					<form style="padding:15px 10px;" class="hui-form" id="ask-leave">
+						<div class="hui-form-items">
+							<div class="hui-form-items-title">姓&nbsp;&nbsp;名</div>
+							<input type="text" class="hui-input hui-input-clear" name="name" />
+						</div>
+						<div class="hui-form-items">
+							<div class="hui-form-items-title">班&nbsp;&nbsp;级</div>
+							<input type="text" class="hui-input hui-input-clear" name="className" />
+						</div>
+						<!-- <div class="hui-form-items">
+							<div style="width: 35%;" class="hui-form-items-title">家长是否知晓</div>
+							<div class="mui-input-row mui-radio mui-left">
+								<label><input name="radio1" type="radio" value="是">是</label>
+							</div>
+							<div class="mui-input-row mui-radio mui-left">
+								<label><input name="radio2" type="radio" value="否">否</label>
+							</div>
+						</div> -->
+						<div class="hui-form-items">
+							<div class="hui-form-items-title">理&nbsp;&nbsp;&nbsp;由</div><br />
+							<textarea id="reason" rows="5" cols=""></textarea>
+						</div>
+						<div style="padding:15px 8px;">
+							<button type="button" class="hui-button hui-primary hui-fr" id="submitBtn">提交数据</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript" src="../js/hui.js"></script>
+		<script src="../js/main.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			var view;
+			mui.plusReady(function() {
+
+				view = plus.webview.currentWebview();
+				console.log(view.username);
+				document.getElementById("submitBtn").addEventListener('tap', function() {
+					let data = getFormData('ask-leave');
+					let reason = document.getElementById("reason").value;
+
+					if (!data) {
+						mui.toast('请完整填写信息');
+					} else {
+						mui.ajax('http://192.168.1.103:8080/user/askLeave.do', {
+							data: JSON.stringify({
+								'username': view.username,
+								'name': data.name,
+								'className': data.className,
+								'reason': reason
+							}),
+							dataType: 'json', //服务器返回json格式数据
+							type: 'post', //HTTP请求类型
+							timeout: 10000, //超时时间设置为10秒；
+							async: false,
+							contentType: 'application/json;charset=utf-8',
+							success: function(data) {
+								console.log(JSON.stringify(data));
+								mui.toast(data.msg);
+								mui.openWindow({
+									url: 'main.html',
+									id: 'main.html',
+									extras: {
+										// username: username
+									}
+								});
+
+							},
+							error: function(xhr, type, errorThrown) {
+								console.log('error');
+							}
+						});
+					}
+				});
+			});
+		</script>
+		<script>
+			var first = null;
+			mui.back = function() {
+				mui.plusReady(function() {
+					//首页返回键处理
+					//处理逻辑：1秒内，连续两次按返回键，则退出应用；
+					if (!first) {
+						first = new Date().getTime();
+						mui.toast('再按一次退出应用');
+						setTimeout(function() {
+							first = null;
+						}, 1000);
+					} else {
+						if (new Date().getTime() - first < 1000) {
+							plus.runtime.quit();
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

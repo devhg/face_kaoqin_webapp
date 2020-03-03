@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<button type="button" id="select">选择</button>
+		<img id="img" src="">
+	</body>
+	<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/hui.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		mui.init();
+		mui.plusReady(function() {
+			document.getElementById("select").addEventListener('tap', function() {
+				plus.gallery.pick(
+					function(path) {
+						hui('#img').attr('src', path);
+						// 多张图片
+						// for (i in path.files) {
+						// 	console.log(path.files[i]);
+						// }
+
+						// 文件上传
+						plus.nativeUI.showWaiting();
+						var task = plus.uploader.createUpload(
+							'http://demo.hcoder.net/up.php', {
+								method: "POST",
+								priority: 100
+							},
+							function(t, status) {
+								plus.nativeUI.closeWaiting();
+								console.log(t.responseText);
+								mui.toast('上传成功');
+							}
+						);
+						for (i in paths.files) {
+							task.addFile(paths.files[i], {
+								key: 'uper' + i,
+								'name': paths.files[i].substr(paths.files[i].lastIndexOf('/'))
+							});
+						}
+						task.start();
+					},
+					function(e) {
+						console.log(e.message);
+					}, {
+						filter: "image",
+						// multiple: true, //开启多选
+						// maximum: 3, // 多选图片 最多个数
+						system: false
+					}
+				);
+			})
+
+		});
+	</script>
+</html>

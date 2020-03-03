@@ -1,0 +1,50 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: white;
+}
+
+.mui-content {
+	height: 656px;
+	width: 100%;
+	background-color: white;
+	position: relative;
+	/* border: 1px solid black; */
+}
+
+.logo {
+	width: 100%;
+	margin-top: 20px;
+	height: 50%;
+	position: relative;
+}
+
+.logo img {
+	display: block;
+	margin: 60px auto;
+	width: 85%;
+	height: 70%;
+}
+
+#form-login {
+	width: 100%;
+	height: 50%;
+	/* margin: 50px 0 0 0; */
+	position: relative;
+	/* border: 1px solid black; */
+	background-color: #F7F7F7
+}
+
+
+#form-login #btn-row {
+	width: 100%;
+	position: absolute;
+	bottom: 70px;
+}
+
+#form-login #btn-row button {
+	margin: 23px 15px;
+	height: 44px;
+	width: 35%;
+	font-size: 1rem;
+}
