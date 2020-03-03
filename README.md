@@ -34,9 +34,5 @@
 
 
 ### 展示图
+![kaoqin.jpg](https://i.loli.net/2020/03/03/VuqW5RHdcNODUQl.jpg)
 
-
-<center class="half">
-    <img src="https://i.loli.net/2020/03/03/FeZjnUOlpxNMaiv.jpg" style="float: left;" width="300"/>
-    <img src="https://i.loli.net/2020/03/03/D8JZRAfj1GxmpTL.png" style="float: left;"  width="300"/>
-</center>
