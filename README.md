@@ -37,6 +37,6 @@
 
 
 <center class="half">
-    <img src="https://i.loli.net/2020/03/03/FeZjnUOlpxNMaiv.jpg" width="300"/>
-    <img src="https://i.loli.net/2020/03/03/D8JZRAfj1GxmpTL.png" width="300"/>
+    <img src="https://i.loli.net/2020/03/03/FeZjnUOlpxNMaiv.jpg" style="float: left;" width="300"/>
+    <img src="https://i.loli.net/2020/03/03/D8JZRAfj1GxmpTL.png" style="float: left;"  width="300"/>
 </center>
